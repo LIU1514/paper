@@ -414,7 +414,7 @@
 
 \begin{abstract}
 %The abstract goes here. DO NOT USE SPECIAL CHARACTERS, SYMBOLS, OR MATH IN YOUR %TITLE OR ABSTRACT.
-Speech Emotion Recognition (SER) refers to the use of machines to recognize the emotions of speaker from the human speech. In this paper, we propose a multi-head self-attention based attention method to improve the recognition accuracy of SER. We call this method head fusion. We combined this method to implement an ACNN model, using MFCCs extracted from speech, and conducted experiments and evaluations on the IEMOCAP dataset. 76.18\% of WA and 76.36\% of UA were obtained on improvised part, both better than state-of-the-art.
+Speech Emotion Recognition (SER) refers to the use of machines to recognize the emotions of a speaker from his (or her) speech. In this paper, we propose a multi-head self-attention based attention method to improve the recognition accuracy of SER. We call this method head fusion. We combined this method to implement an ACNN model, using MFCCs extracted from speech and conducted experiments and evaluations on the IEMOCAP dataset. 76.18\% of WA and 76.36\% of UA were obtained on the improvised part, both better than state-of-the-art.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -447,12 +447,12 @@ Today, machine speech recognition services such as Auto Speech Recognition (ASR)
 Unlike general ASR, since emotions are subjective and influenced by many factors, how to obtain accurate and recognized high-quality labeled emotional speech data is important in SER. According to R. Altrov \emph{et al.} \cite{altrov2015influence}, language and culture have an important influence on the judgment of emotions in speech. Fortunately, the IEMOCAP corpus established by C. Busso \emph{et al.} effectively solved the problem of lack of data in SER \cite{busso2008iemocap}. This corpus has been frequently used in the field of SER.
 
 However, the current SER model still does not accurately recognize human emotions. On the IEMOCAP corpus, the state of the art recognition accuracy is 70.17\% for weighted accuracy(WA), and 70.85\% for unweighted accuracy (UA)\cite{tarantino2019self}. We believe that there is still much room for improvement in this accuracy.
-In this paper, we propose an approach based on multi-head self-attention and an architecture combined with attention layer and Convolutional Neural Network (CNN) for SER. It achieved state of the art recognition accuracy on IEMOCAP.
+In this paper, we propose an approach based on multi-head self-attention and architecture combined with attention mechanism and Convolutional Neural Network (CNN) for SER. It achieved state of the art recognition accuracy on IEMOCAP.
 
 In this paper, our main contributions are as follows:
 
 1) We proposed a method based on multi-head self-attention. We call this method head fusion. Using this method increases the recognition accuracy by about 6\% in the IEMOCAP corpus compared to the normal self-attention structure.
-2) We implemented a SER model combining CNN and attention and performed experiments on the IEMOCAP corpus, reaching 76.18\% of WA and 76.36\% of UA, which is state of the art.
+2) We implemented an SER model combining CNN and attention and performed experiments on the IEMOCAP corpus, reaching 76.18\% of WA and 76.36\% of UA, which is state of the art.
 
 % You must have at least 2 lines in the paragraph with the drop letter
 % (should never be an issue)
@@ -470,22 +470,22 @@ In this paper, our main contributions are as follows:
 \section{RELATED WORK}
 Before the era of deep learning, for SER, researchers mostly use complex hand-crafted features (such as IS09, eGeMaps, etc.) and traditional machine learning methods (such as HMM, SVM, etc.) \cite{schuller2003hidden,mower2010framework}. In 2014, K. Han \emph{et al.} proposed the first end-to-end deep learning SER model \cite{han2014speech}. Later, with the development of deep learning technology, more and more deep learning models for SER were proposed.
 
-Vladimir Chernykh \emph{et al.} proposed a CTC-based RNN network that uses hand-crafted 34-dimensional features for emotional classification \cite{chernykh2017emotion}. Abdul Malik Badshah \emph{et al.} inputted the spectrogram as features into deep CNN for classification \cite{badshah2017speech}.Xixin Wu \emph{et al.} used the spectrogram and replaced the traditional convolution network with CapsNet, which achieved better classification results \cite{wu2019speech}. 
+Vladimir Chernykh \emph{et al.} proposed a CTC-based RNN network that uses hand-crafted 34-dimensional features for emotional classification \cite{chernykh2017emotion}. Abdul Malik Badshah \emph{et al.} inputted the spectrogram as features into deep CNN for classification \cite{badshah2017speech}. Xixin Wu \emph{et al.} used the spectrogram and replaced the traditional convolution network with CapsNet, which achieved better classification results \cite{wu2019speech}. 
 
 At present, the attention mechanism is being used more and more in the field of deep learning, especially after Google has greatly improved the accuracy of machine translation \cite{vaswani2017attention}. In the field of speech recognition, attention mechanism has been used in many tasks such as ASR \cite{pham2019very}, speaker recognition \cite{india2019self} and SER \cite{li2018attention,tarantino2019self,zhao2019attention,chen20183}.
 
-Pengcheng Li \emph{et al.} proposed a mechanism called attention pooling that uses a spectrogram as input to apply top-down and bottom-up attention \cite{li2018attention}. Lorenzo Tarantino \emph{et al.} uses a combination of general self-attention and CNN, using a hand-crafted feature set \cite{tarantino2019self}. Ziping Zhao \emph{et al.} combines the Connectionist Temporal Classification(CTC) method and attention mechanism to convert classification problems into transfer problems by adding silent labels \cite{zhao2019attention}. Mingyi Chen \emph{et al.} uses the mel spectrum , its delta and its second-order delta as inputs, combines CNN and RNN, and uses an attention layer at the end \cite{chen20183}.
+Pengcheng Li \emph{et al.} proposed a mechanism called attention pooling that uses a spectrogram as input to apply top-down and bottom-up attention \cite{li2018attention}. Lorenzo Tarantino \emph{et al.} uses a combination of general self-attention and CNN, using a hand-crafted feature set \cite{tarantino2019self}. Ziping Zhao \emph{et al.} combines the Connectionist Temporal Classification(CTC) method and attention mechanism to convert classification problems into transfer problems by adding silent labels \cite{zhao2019attention}. Mingyi Chen \emph{et al.} uses the mel-spectrum, its delta and its second-order delta as inputs, combines CNN and RNN, and uses an attention layer at the end \cite{chen20183}.
 
-In addition, some studies combine speech and text for recognition. For example, Seunghyun Yoon \emph{et al.} use ASR to obtain text, use attention mechanism to calculate speech-related parts from text, and use BLSTM for recognition \cite{yoon2019speech}.
+In addition, some studies combine speech and text for recognition. For example, Seunghyun Yoon \emph{et al.} use ASR to obtain text, use an attention mechanism to calculate speech-related parts from the text, and use BLSTM for recognition \cite{yoon2019speech}.
 
 \section{MODEL ARCHITECTURE AND HEAD FUSION}
-SER is a classification problem that extracting features from human speech and inputting them into traditional machine learning algorithms or deep neural networks for recognition. Emotions are subjective and complex. If the tendency of emotions (positive or negative) is the same, the differences between them are so small that even humans can not easily and accurately distinguish, which brings great difficulty to SER. In order to improve the accuracy of SER, we propose the following methods.
+SER is a classification problem that extracting features from human speech and inputting them into traditional machine learning algorithms or deep neural networks for recognition. Emotions are subjective and complex. If the tendency of emotions (positive or negative) is the same, the differences between them are so small that even humans can not easily and accurately distinguish, which brings great difficulties to SER. In order to improve the accuracy of SER, we propose the following methods.
 \subsection{Feature Extraction}
-We use MFCCs as input, an audio feature that is widely used in the field of speech recognition. First, we use a hanning window with a length of 2048 and a hop length of 512 to perform a short term Fourier transform (STFT) on the audio signal and obtain the power spectrum of the audio signal. Then we use mel filters to map the spectrum to mel-scale and log to obtain the log Mel spectrum. Finally we use DCT transformation to obtain 13 MFCCs.
+We use MFCCs as input, an audio feature that is widely used in the field of speech recognition. First, we use a Hanning window with a length of 2048 and a hop length of 512 to perform a short term Fourier transform (STFT) on the audio signal and obtain the power spectrum of the audio signal. Then we use mel filters to map the spectrum to Mel-scale and log to obtain the log Mel-spectrum. Finally, we use a DCT transformation to obtain 13 MFCCs.
 \subsection{Model Architecture}
 Figure \ref{model} shows the overall structure of our model, which consists mainly of a convolutional layer and an attention layer.
-We use the extracted MFCCs as input and treat this input as an image, using two convolutional layers with kernel size of (10,2) and (2,8) to extract the horizontal (cross-time) and vertical (cross-MFCC) textures, respectively. After padding, the 8-channel output of each convolutional layer is concatenated to a 16-channel representation. Then 4 convolution layers are applied to generate an 80-channel representation and sent to the self-attention layer. 
-Table \ref{ConvSettings} shows the specific settings for the convolutional layers. After each convolutional layer, a Batch Normalization (BN) layer and a activation function Relu are used, and conv2 and conv3 are followed by max pooling with kernel size of 2 to reduce the data size.
+We use the extracted MFCCs as input and treat this input as an image, using two convolutional layers with a kernel size of (10,2) and (2,8) to extract the horizontal (cross-time) and vertical (cross-MFCC) textures, respectively. After padding, the 8-channel output of each convolutional layer is concatenated to a 16-channel representation. Then 4 convolution layers are applied to generate an 80-channel representation and sent to the self-attention layer. 
+Table \ref{ConvSettings} shows the specific settings for the convolutional layers. After each convolutional layer, a Batch Normalization (BN) layer and an activation function Relu are used, and conv2 and conv3 are followed by max-pooling with a kernel size of 2 to reduce the data size.
 \begin{table}[h]
 	\renewcommand\arraystretch{1.5}
 	\setlength{\abovecaptionskip}{-0.2cm}
@@ -544,7 +544,7 @@ X_{mattn}=\frac{\sum_{0}^{n\_head-1}X_{attn}^i}{n\_head}
 \end{split}
 \end{equation}
 
-Then we use global average pooling (GAP) to generate a feature point X$_{fusion}$ for this map. In the past computer vision research, GAP has been proved to be an effective method \cite{he2016deep}. We call this superposition method head fusion. We set hyperparameter n\_head to represent how many heads being fused in a feature point and n\_size to reperesent how many feature points to generate.Finally, we concatenate these points and feed them to the fully connection layer to obtain the final classification result.
+Then we use global average pooling (GAP) to generate a feature point X$_{fusion}$ for this map. In the past computer vision research, GAP has been proved to be an effective method \cite{he2016deep}. We call this superposition method head fusion. We set hyperparameter n\_head to represent how many heads being fused in a feature point and n\_size to represent how many feature points to generate. Finally, we concatenate these points and feed them to the fully connected layer to obtain the final classification result.
 Figure \ref{headFusion} shows the working process of head fusion.
 
 \begin{figure}[h]
@@ -560,13 +560,13 @@ We use the IEMOCAP corpus as the experimental data set. It is widely used in SER
 
 The IEMOCAP corpus is divided into two parts: scripted part and improvised part, that is, the actors perform according to the script and improvisation. In general, the accuracy of the classification of the improvised part is higher than that of the scripted part, because actors do not need to pay attention to the content of the words and express emotions more naturally \cite{li2018attention,tarantino2019self}.
 
-Since the happy class in IEMOCAP is too rare, researchers sometimes choose to use excitement class instead of happy class \cite{tarantino2019self,chernykh2017emotion} or merge samples from happy class and excitement class \cite{zhao2019attention,neumann2019improving}. We selected improvised part of four emotions (angry, sad, excited and neutral) for our experiment to compare with previous research.Besides,we
-tested our best model on the scripted part and full corpus to campare with the self-attention architecture in \cite{tarantino2019self}.
+Since the happy class in IEMOCAP is too rare, researchers sometimes choose to use excitement class instead of happy class \cite{tarantino2019self,chernykh2017emotion} or merge samples from happy class and excitement class \cite{zhao2019attention,neumann2019improving}. We selected the improvised part of four emotions (angry, sad, excited and neutral) for our experiment to compare with previous research. Besides, we
+tested our best model on the scripted part and full corpus to compare with the self-attention architecture in \cite{tarantino2019self}.
  
 \subsection{Experimental Setup}
 \subsubsection{Pre-treatment}
-For each utterance, we segment it into segments of length 2 seconds and drop the parts that are too short. In the training set, in order to obtain more training data, there is a 1 second overlap between each segment. These segments are given the label of their source utterance and participates in training as independent data. In the test set, segments from the same utterance are used together, and the results are averaged to obtain predictions. We set the overlap to 1.6 seconds to get better predictions.
-Figure \ref{pre-treat} shows the 2 different ways to pre-treat data in train set and test set.
+For each utterance, we segment it into segments of length 2 seconds and drop the parts that are too short. In the training set, in order to obtain more training data, there is an overlap of 1 second between each segment. These segments are given the label of their source utterance and participate in training as independent data. In the test set, segments from the same utterance are used together, and the results are averaged to obtain predictions. We set the overlap to 1.6 seconds to get better predictions.
+Figure \ref{pre-treat} shows the 2 different ways to pre-treat data in the train set and the test set.
 
 \begin{figure}[h]
 	
@@ -588,7 +588,7 @@ Figure \ref{pre-treat} shows the 2 different ways to pre-treat data in train set
 \end{figure}
 
 \subsubsection{Verification Method}
-To compare with previous studies, we used 5-fold cross validation, randomly selected 80\% data for training and 20\% data for testing. We implemented the model with pytorch, used the cross entropy loss function, and optimized it with the Adam optimizer. The initial learning rate was 0.001, weight decay was 1e-6, and the learning rate was manually set to 1/10 for every 10 epochs. We trained the model with 50 epochs on a GTX 1060 GPU and evaluated its WA and UA, saving the best model. For each parameter setting, we used 5 different random seeds for training and testing and averaged the accuracy to reduce the error.
+To compare with previous studies, we used 5-fold cross-validation, randomly selected 80\% data for training and 20\% data for testing. We implemented the model with PyTorch, used the cross-entropy loss function, and optimized it with the Adam optimizer. The initial learning rate was 0.001, weight decay was 1e-6, and the learning rate was manually set to 1/10 for every 10 epochs. We trained the model with 50 epochs on a GTX 1060 GPU and evaluated its WA and UA, saving the best model. For each parameter setting, we used 5 different random seeds for training and testing and averaged the accuracy to reduce the error.
 
 \subsection{Results and Analysis}
 In the experiment, the accuracy is improved compared to the self-attention model without head fusion, and the value of n\_head has a significant effect on the experimental results. We find that as n\_head increases, the accuracy increases gradually and reaches a maximum at a certain point. Then, if n\_head continues to increase, the accuracy will gradually decrease. We believe that the reason for this decline is that the value of n\_head is too high, causing some attention points in the map to be placed in too much detail, which will reduce the effect of attention instead.
@@ -621,7 +621,7 @@ Figure \ref{HeadResult} shows the change in accuracy caused by changing the valu
 \end{figure}
 
 
-As shown in Figure \ref{SizeResult}, we tested the effect of different n\_sizes on the model's effect with n\_head of 8, and used the best n\_size of 64 in our final model.
+As shown in Figure \ref{SizeResult}, we tested the effect of different n\_sizes on the model's effect with n\_head of 8 and used the best n\_size of 64 in our final model.
 
 \begin{figure}[h]
 	
@@ -659,7 +659,7 @@ We provide a comparison of the accuracy of previous research and our model in Ta
 	\end{center}  
 \end{table}
 
-To campare with the self-attention architecture in \cite{tarantino2019self},we tested our best model on the scripted part and full corpus of IEMOCAP.The result is shown in Table \ref{ScriptAndAll}.
+To compare with the self-attention architecture in \cite{tarantino2019self}, we tested our best model on the scripted part and full corpus of IEMOCAP. The result is shown in Table \ref{ScriptAndAll}.
 
 \begin{table}[h]
 	\renewcommand\arraystretch{1.5}
@@ -798,7 +798,7 @@ shows the result.
 
 
 \section{Conclusion}
-In this paper, we propose an improved mechanism head fusion for SER based on multi-head self-attention and verify the role of its parameters. We also implemented an ACNN model, using MFCCs as input feature to recognize emotions in speech. Experiments were carried out on the IEMOCAP corpus, using four emotions (angry, sad, excited and neutral) for recognition, which verified the validity of our model.
+In this paper, we propose an improved mechanism head fusion for SER based on multi-head self-attention and verify the role of its parameters. We also implemented an ACNN model, using MFCCs as input features to recognize emotions in speech. Experiments were carried out on the IEMOCAP corpus, using four emotions (angry, sad, excited and neutral) for recognition, which verified the validity of our model.
 
 % conference papers do not normally have an appendix
 
