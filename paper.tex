@@ -556,13 +556,35 @@ Figure \ref{headFusion} shows the working process of head fusion.
 
 \section{EXPERIMENTAL EVALUATIONS}
 \subsection{Data Set}
-We use the IEMOCAP corpus as the experimental data set. It is widely used in SER and contains a total of about 12 hours of labeled emotional speech data. It consists of nine emotions: anger, happiness, excitement, sadness, frustration, fear, surprise, other and neutral state. Each utterance is evaluated by an evaluator of 3 or more people, and the utterance will be labeled with the corresponding emotion only if more than half of the evaluators agree. 
+We use the IEMOCAP corpus as the experimental data set. It is widely used in SER and contains a total of about 12 hours of labeled emotional speech data. It consists of nine emotions: anger, happiness, excitement, sadness, frustration, fear, surprise, other and neutral state. Each utterance is evaluated by an evaluator of 3 or more people, and the utterance will be labeled with the corresponding emotion only if more than half of the evaluators agree, else, it will be labeled with 'other'. 
 
 The IEMOCAP corpus is divided into two parts: scripted part and improvised part, that is, the actors perform according to the script and improvisation. In general, the accuracy of the classification of the improvised part is higher than that of the scripted part, because actors do not need to pay attention to the content of the words and express emotions more naturally \cite{li2018attention,tarantino2019self}.
 
+Figure \ref{dataDistribution} shows the distribution of data in the IEMOCAP corpus.
+
+\begin{figure}[h]
+	
+	\centering
+	\subfigcapskip=5pt
+	\subfigure[Distribution of utterances with 9 emotions.]{
+		\begin{minipage}{8cm}
+			\centering
+			\includegraphics[width=0.85\columnwidth]{pic/emoInIEMOCAP}
+	\end{minipage}}
+	\subfigure[Distribution of utterances improvised or scripted.]{
+		\begin{minipage}{8cm}
+			\centering
+			\includegraphics[width=0.85\columnwidth]{pic/ImproOrScript}
+	\end{minipage}}
+	\caption{Figure (a) shows the distribution of utterances with 9 emotions and Figure (b) shows the distribution of utterances improvised or scripted in the IEMOCAP corpus.}
+	\label{dataDistribution}
+	
+\end{figure}
 Since the happy class in IEMOCAP is too rare, researchers sometimes choose to use excitement class instead of happy class \cite{tarantino2019self,chernykh2017emotion} or merge samples from happy class and excitement class \cite{zhao2019attention,neumann2019improving}. We selected the improvised part of four emotions (angry, sad, excited and neutral) for our experiment to compare with previous research. Besides, we
 tested our best model on the scripted part and full corpus to compare with the self-attention architecture in \cite{tarantino2019self}.
+
  
+
 \subsection{Experimental Setup}
 \subsubsection{Pre-treatment}
 For each utterance, we segment it into segments of length 2 seconds and drop the parts that are too short. In the training set, in order to obtain more training data, there is an overlap of 1 second between each segment. These segments are given the label of their source utterance and participate in training as independent data. In the test set, segments from the same utterance are used together, and the results are averaged to obtain predictions. We set the overlap to 1.6 seconds to get better predictions.
@@ -572,62 +594,84 @@ Figure \ref{pre-treat} shows the 2 different ways to pre-treat data in the train
 	
 	\centering
 	\subfigcapskip=5pt
-	\subfigure[In train set, we segement an utterance into segements of length 2 seconds with an overlap of length 1 second between each segement and use them as independent data in training.]{
+	\subfigure[The way of pre-treatment in train set.]{
 	\begin{minipage}{10cm}
 		\flushleft
+%		\centering
 		\includegraphics[width=0.85\columnwidth]{pic/train_set}
 	\end{minipage}}
-	\subfigure[In test set,we segement an utterance into segements of length 2 seconds with an overlap of length 1.6 second between each segement and average the prediction of each segement of a source utterance to obtain the final prediction.]{
+	\subfigure[The way of pre-treatment in test set.]{
 		\begin{minipage}{10cm}
 			\flushleft
+%			\centering
 			\includegraphics[width=0.85\columnwidth]{pic/test_set}
 \end{minipage}}
-	\caption{Figure (a) shows the way of pre-treatment in train set and Figure (b) shows the way of pre-treatment in test set.}
+	\caption{As shown in Figure (a), in the train set, we segment an utterance into segments of length 2 seconds with an overlap of length 1 second between each segment and use them as independent data in training. As shown in Figure (b), in the test set, we segment an utterance into segments of length 2 seconds with an overlap of length 1.6 seconds between each segment and average the prediction of each segment of a source utterance to obtain the final prediction.}
 	\label{pre-treat}
 	
 \end{figure}
 
 \subsubsection{Verification Method}
-To compare with previous studies, we used 5-fold cross-validation, randomly selected 80\% data for training and 20\% data for testing. We implemented the model with PyTorch, used the cross-entropy loss function, and optimized it with the Adam optimizer. The initial learning rate was 0.001, weight decay was 1e-6, and the learning rate was manually set to 1/10 for every 10 epochs. We trained the model with 50 epochs on a GTX 1060 GPU and evaluated its WA and UA, saving the best model. For each parameter setting, we used 5 different random seeds for training and testing and averaged the accuracy to reduce the error.
+To compare with previous studies, we used 5-fold cross-validation, randomly selected 80\% data for training and 20\% data for testing. We implemented the model with PyTorch, used the cross-entropy loss function, and optimized it with the Adam optimizer. The batch size was set to 32. The initial learning rate was 0.001, weight decay was 1e-6, and the learning rate was manually set to 1/10 for every 10 epochs. We trained the model with 50 epochs on a GTX 1060 GPU and evaluated its WA and UA, saving the best model. For each parameter setting, we used 5 different random seeds for training and testing and averaged the accuracy to reduce the error.
 
 \subsection{Results and Analysis}
 In the experiment, the accuracy is improved compared to the self-attention model without head fusion, and the value of n\_head has a significant effect on the experimental results. We find that as n\_head increases, the accuracy increases gradually and reaches a maximum at a certain point. Then, if n\_head continues to increase, the accuracy will gradually decrease. We believe that the reason for this decline is that the value of n\_head is too high, causing some attention points in the map to be placed in too much detail, which will reduce the effect of attention instead.
+
 Figure \ref{HeadResult} shows the change in accuracy caused by changing the value of n\_head when n\_size is set to 32, 64, and 128.
+When n\_size is set to 32 or 64, we obtain the highest accuracy when n\_head is set to 4, and when n\_size is set to 128, we obtain the highest accuracy when n\_head is set to 3.We set n\_head to 4 in our final model.
 
 \begin{figure}[h]
 	
 	\subfigcapskip=5pt
 	\centering
-	\subfigure[when n\_size is 32, we obtain the highest accuracy when n\_head is 4]{
-		\begin{minipage}{9cm}
+	\subfigure[when n\_size is set to 32, we obtain the highest accuracy when n\_head is set to 4]{
+		\begin{minipage}{8cm}
 			\centering
-			\flushleft
+%			\flushleft
 			\includegraphics[width=0.93\linewidth]{pic/n_size32}
 	\end{minipage}}
-	\subfigure[when n\_size is 64, we obtain the highest accuracy when n\_head is 4]{
-		\begin{minipage}{9cm}
+	\subfigure[when n\_size is set to 64, we obtain the highest accuracy when n\_head is set to 4]{
+		\begin{minipage}{8cm}
 			\centering
-			\flushleft
+%			\flushleft
 			\includegraphics[width=0.93\linewidth]{pic/n_size64}
 	\end{minipage}}
-		\subfigure[when n\_size is 128, we obtain the highest accuracy when n\_head is 3]{
-		\begin{minipage}{9cm}
+		\subfigure[when n\_size is set to 128, we obtain the highest accuracy when n\_head is set to 3]{
+		\begin{minipage}{8cm}
 			\centering
-			\flushleft
+%			\flushleft
 			\includegraphics[width=0.93\linewidth]{pic/n_size128}
 	\end{minipage}}
-	\caption{Figure (a) shows the accuracy when n\_size is 32, Figure (b) shows the accuracy when n\_size is 64 and Figure (c) shows the accuracy when n\_size is 128. As shown, when n\_size is 32 or n\_size is 64, we obtain the highest accuracy when n\_head is 4, and when n\_size is 128, we obtain the highest accuracy when n\_head is 3.}
+	\caption{Figure (a) shows the accuracy when n\_size is set to 32, Figure (b) shows the accuracy when n\_size is set to 64 and Figure (c) shows the accuracy when n\_size is set to 128. As shown, when n\_size is set to 32 or 64, we obtain the highest accuracy when n\_head is set to 4, and when n\_size is set to 128, we obtain the highest accuracy when n\_head is set to 3.}
 	\label{HeadResult}
 \end{figure}
 
 
-As shown in Figure \ref{SizeResult}, we tested the effect of different n\_sizes on the model's effect with n\_head of 8 and used the best n\_size of 64 in our final model.
+As shown in Figure \ref{SizeResult}, we also tested the effect of different n\_sizes on accuracy with n\_head set to 2,4 and 8. When n\_head is set to 2, we obtain the highest accuracy when n\_size is set to 16, when n\_head is set to 4, we obtain the highest accuracy when n\_size is set to 64, and when n\_head is set to 8, we obtain the highest accuracy when n\_size is set to 32. We set n\_size to 64 in our final model.
 
 \begin{figure}[h]
 	
+	\subfigcapskip=5pt
 	\centering
-	\includegraphics[width=0.95\linewidth]{pic/n_head8}
-	\caption{We tested the accuracy with differet n\_size and used the best n\_size of 64 in our final model.}
+	\subfigure[when n\_head is set to 2, we obtain the highest accuracy when n\_size is set to 16]{
+		\begin{minipage}{8cm}
+			\centering
+%			\flushleft
+			\includegraphics[width=0.93\linewidth]{pic/n_head2}
+	\end{minipage}}
+	\subfigure[when n\_head is set to 4, we obtain the highest accuracy when n\_size is set to 64]{
+		\begin{minipage}{8cm}
+			\centering
+%			\flushleft
+			\includegraphics[width=0.93\linewidth]{pic/n_head4}
+	\end{minipage}}
+	\subfigure[when n\_head is set to 8, we obtain the highest accuracy when n\_size is set to 32]{
+		\begin{minipage}{8cm}
+			\centering
+%			\flushleft
+			\includegraphics[width=0.93\linewidth]{pic/n_head8}
+	\end{minipage}}
+	\caption{Figure (a) shows the accuracy when n\_head is set to 2, Figure (b) shows the accuracy when n\_head is set to 4 and Figure (c) shows the accuracy when n\_head is set to 8. As shown, when n\_head is set to 2, we obtain the highest accuracy when n\_size is set to 16, when n\_head is set to 4, we obtain the highest accuracy when n\_size is set to 64, and when n\_head is set to 8, we obtain the highest accuracy when n\_size is set to 32.}
 	\label{SizeResult}
 \end{figure}
 
@@ -686,7 +730,6 @@ To compare with the self-attention architecture in \cite{tarantino2019self}, we 
 		\end{tabular}  
 	\end{center}  
 \end{table}
-
 We also performed an ablation study to verify the effect of the attention layer and compare the effects of the number of intermediate convolution layers.Table \ref{ablation}
 shows the result.
 \begin{table}[h] 
